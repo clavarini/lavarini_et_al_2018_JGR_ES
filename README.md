@@ -35,7 +35,7 @@ To access the functions' names, run:
 >>> dir(module's name) 
 ```
 
-To know what each function does, run:
+To know what each function does and the file extensions needed to perform the calculations, run:
 
 ```
 >>> help(function)
@@ -44,21 +44,17 @@ To know what each function does, run:
 ### Examples
 
 A folder (Examples) available in this repository has a series of code showing how we used the functions
-in our research paper and it can be assessed through the cloned/downloaded
-repositories you have in your local machine.
+in our research paper. There are also examples of files that are required to correctly run the experiments. 
+All these files can be assessed through the cloned/downloaded repositories you have in your local machine.
 
-```
-Open 'Figure3.py', 'Figure4.py' and 'Figure5.py' in your Python console to see the script 
-used to generate  the figure 3 of our paper.
-
-```
 ## Built With
 
 * [Python](https://www.python.org/downloads/release/python-364/) - Python 3.x.
 
 ## Versioning
 
-We use GitHub for versioning (https://github.com/clavarini/Lavarini_et_al_2018a).  
+We use GitHub for versioning (https://github.com/clavarini/Lavarini_et_al_2018a).
+
 Suggestions to improve the code can be done by pull request or contacting the
 corresponding author (lavarini.c@gmail.com).
 
