@@ -13,7 +13,7 @@ Python 3.x.
 
 ### Installing
 
-1. Clone or download our repositoty into your local machine.
+1. Clone or download our repository into your local machine.
 
 2. Add your path to Python interpreter:
 ```
@@ -28,7 +28,7 @@ Use import to have the packages in your Python shell.
 
 ## Running the tests
 
-There almost 9 function divided in two packages (zAGES, pABRASIONmodel). 
+There are 9 function divided in two packages (zAGES and pABRASIONmodel). 
 To access the functions' names, run:
 
 ```
@@ -43,7 +43,7 @@ To know what each function does and the file extensions needed to perform the ca
     
 ### Examples
 
-A folder (Examples) available in this repository has a series of code showing how we used the functions
+A folder (examples) available in this repository has a series of code showing how we used the functions
 in our research paper. There are also examples of files that are required to correctly run the experiments. 
 All these files can be assessed through the cloned/downloaded repositories you have in your local machine.
 
