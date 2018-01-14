@@ -1,9 +1,6 @@
 # Lavarini_et_al_2018a
 Packages that are desgined to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
 
-# Lavarini et al.[2018a].
-Does pebble abrasion influence detrital age population statistics? 
-
 In this project, we provide packages that are desgined to quantify zircon 
 mixing proportions of different source units in modern river sediments and to 
 compare U-Pb age distributions deconvolved from zircons.
@@ -20,9 +17,7 @@ Python 3.x.
 ### Installing
 
 Clone or download our repositoty into your local machine.
-```
-Give the example
-```
+
 Add your path to Python interpreter.
 ```
 >>> import sys
@@ -30,18 +25,23 @@ Add your path to Python interpreter.
 
 Use import to have the packages in your Python shell.
 >>> import sys zAGES, pABRASIONmodel
+```
 
 ## Running the tests
 
 There almost 9 function divided in two packages (zAGES, pABRASIONmodel). 
 To access the functions' names, run:
-    
+
+```
 >>> dir(module's name) 
+```
 
 To know what each function does, run:
 
+```
 >>> help(function)
-     
+```
+    
 ### Examples
 
 A folder (Examples) has a series of code showing how we used the functions
@@ -72,5 +72,8 @@ This project is licensed under the MIT License - see the (LICENSE.md) file for d
 
 ## Acknowledgments
 
-* CAPES Brazilian Foundation: Chrystiann Lavarini BEX 13193-13-9; 
-* CAPES Brazilian Foundation: Carlos Alberto da Costa Filho BEX 0061-13-1.
+CAPES Brazilian Foundation: Chrystiann Lavarini BEX 13193-13-9; 
+CAPES Brazilian Foundation: Carlos Alberto da Costa Filho BEX 0061-13-1.
+
+## Lavarini et al.[2018a].Does pebble abrasion influence detrital age population statistics? 
+
