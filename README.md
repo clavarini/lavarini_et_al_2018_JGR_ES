@@ -71,6 +71,7 @@ This project is licensed under the MIT License - see the (LICENSE.md) file for d
 ## Acknowledgments
 
 CAPES Brazilian Foundation: Chrystiann Lavarini BEX 13193-13-9; 
+
 CAPES Brazilian Foundation: Carlos Alberto da Costa Filho BEX 0061-13-1.
 
 ## Reference
