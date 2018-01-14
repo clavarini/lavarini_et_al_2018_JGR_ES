@@ -1,4 +1,5 @@
 # Lavarini et al. [2018a]
+
 Packages that are desgined to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
 
 ## Getting Started
@@ -14,12 +15,14 @@ Python 3.x.
 
 1. Clone or download our repositoty into your local machine.
 
-2. Add your path to Python interpreter.
+2. Add your path to Python interpreter:
 ```
 >>> import sys
 >>> sys.path.append('paste the path here')```
+```
 
 Use import to have the packages in your Python shell.
+```
 >>> import sys zAGES, pABRASIONmodel
 ```
 
@@ -40,19 +43,22 @@ To know what each function does, run:
     
 ### Examples
 
-A folder (Examples) has a series of code showing how we used the functions
+A folder (Examples) available in this repository has a series of code showing how we used the functions
 in our research paper and it can be assessed through the cloned/downloaded
-reposotories you have in your local machine.
+repositories you have in your local machine.
 
 ```
 Open 'Figure3.py', 'Figure4.py' and 'Figure5.py' in your Python console to see the script 
 used to generate  the figure 3 of our paper.
 
 ```
+## Built With
+
+* [Python](https://www.python.org/downloads/release/python-364/) - Python 3.x.
 
 ## Versioning
 
-We use GitHub for versioning (https://github.com/clavarini/Lavarini et al.[2018a]).  
+We use GitHub for versioning (https://github.com/clavarini/Lavarini_et_al_2018a).  
 Suggestions to improve the code can be done by pull request or contacting the
 corresponding author (lavarini.c@gmail.com).
 
@@ -60,7 +66,7 @@ corresponding author (lavarini.c@gmail.com).
 
 * **Chrystiann Lavarini** - (https://github.com/clavarini)
 * **Carlos A. da Costa Filho** - (https://github.com/cako)
-* **Mikael Attal** - 
+* **Mikael Attal** 
 
 ## License
 
@@ -71,5 +77,6 @@ This project is licensed under the MIT License - see the (LICENSE.md) file for d
 CAPES Brazilian Foundation: Chrystiann Lavarini BEX 13193-13-9; 
 CAPES Brazilian Foundation: Carlos Alberto da Costa Filho BEX 0061-13-1.
 
-## Lavarini et al.[2018a].Does pebble abrasion influence detrital age population statistics? 
+## Reference
 
+C. Lavarini, M. Attal, C. A. da Costa Filho and L. Kirstein, 2018, Does pebble abrasion influence detrital age population statistics? A numerical investigation of natural datasets, Journal of Geophysical Research: Earth Surface, submitted.
