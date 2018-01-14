@@ -1,6 +1,6 @@
 # Lavarini et al. [2018a]
 
-Packages that are desgined to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
+Packages that are designed to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
 
 ## Getting Started
 
