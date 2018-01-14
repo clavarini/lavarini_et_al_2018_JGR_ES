@@ -1,9 +1,5 @@
-# Lavarini_et_al_2018a
+# Lavarini et al. [2018a]
 Packages that are desgined to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
-
-In this project, we provide packages that are desgined to quantify zircon 
-mixing proportions of different source units in modern river sediments and to 
-compare U-Pb age distributions deconvolved from zircons.
 
 ## Getting Started
 
@@ -16,9 +12,9 @@ Python 3.x.
 
 ### Installing
 
-Clone or download our repositoty into your local machine.
+1. Clone or download our repositoty into your local machine.
 
-Add your path to Python interpreter.
+2. Add your path to Python interpreter.
 ```
 >>> import sys
 >>> sys.path.append('paste the path here')```
