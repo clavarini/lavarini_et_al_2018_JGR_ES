@@ -1,6 +1,6 @@
 # Lavarini et al. [2018a]
 
-Packages that are designed to quantify zircon mixing proportions of source units in river sediments and to compare U-Pb age distributions.
+Packages that are designed to quantify zircon mixing proportion of source units in river sediments and to compare U-Pb age distributions.
 
 ## Getting Started
 
@@ -43,12 +43,12 @@ To know what each function does and the file extensions needed to perform the ca
     
 ### Examples
 
-A folder available in this repository has a series of examples showing how we used the functions
+A folder available in this repository ('examples') shows how we used these functions
 in our research paper. 
 
-There are also examples of files that are required to run the experiments correctly. 
+There is also a text file ('variables_in_detail') explaining the structure of files required to run the code correctly. 
 
-All files can be assessed through the cloned/downloaded repositories in your local machine.
+All these examples can be assessed through the cloned/downloaded repositories in your local machine.
 
 ## Built With
 
