@@ -276,11 +276,8 @@ print('M4 =', M4)
 print('L4 =', L4)
 print('--------')
 
-rel_error1 = np.trapz(abs(PDF['Art']-PDF['K']).as_matrix().flatten(),
-                     dx=x[2]-x[1])/2
-rel_error1 = rel_error1*100
 
-# Create distribution
+# Create distribution for Kolmogorv-Smirnov (K-S) test
 DIST = {}
 DIST['Art'] = stats.rv_discrete(name='Art',
                 values=(x, PDF['Art'].as_matrix().flatten()))
@@ -292,17 +289,21 @@ DIST['Ami2'] = stats.rv_discrete(name='Ami2',
                 values=(x, PDF['Ami2'].as_matrix().flatten()))
 DIST['Abr'] = stats.rv_discrete(name='Abr',
                 values=(x, PDF['Abr'].as_matrix().flatten()))
+
+# Iterate over all single source data
 for region in objects:
     DIST[region] = stats.rv_discrete(name=region,
                                 values=(x, PDF[region].as_matrix().flatten()))
-#
+
 # Calculate KS test on two sampled distributions
 SIZES['Art'] = SIZES['A'] + SIZES['F'] + SIZES['C'] + SIZES['H']
+# Distance between two CDFs (D) and its probability (p) of rejecting the null hypothesis:
 D1, p1 = 0, 0
 D2, p2 = 0, 0
 D3, p3 = 0, 0
 D4, p4 = 0, 0
 
+# Storing the test results
 for i in range(1000):
     data1, data2 = DIST['Art'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
     data3, data4 = DIST['Ami'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
@@ -332,105 +333,27 @@ p3 /= 1000
 D4 /= 1000
 p4 /= 1000
 
+# Display the results:
 print('-------')
-print('KS 1', kstest1)
-print('KS 2', kstest2)
-print('KS 3)', kstest3)
-print('KS 4', kstest4)
+print('KS 1: ', kstest1)
+print('KS 2: ', kstest2)
+print('KS 3: ', kstest3)
+print('KS 4: ', kstest4)
 print('-------')
-print('KS 1', D1, p1)
-print('KS 2', D2, p2)
-print('KS 3', D3, p3)
-print('KS 4', D4, p4)
+print('KS 1: ', D1, p1)
+print('KS 2: ', D2, p2)
+print('KS 3: ', D3, p3)
+print('KS 4: ', D4, p4)
 print('-------')
 
-# Manual KS Test
-def ksprep(data1, data2):
-    data1, data2 = map(np.asarray, (data1, data2))
-    n1 = data1.shape[0]
-    n2 = data2.shape[0]
-    n1 = len(data1)
-    n2 = len(data2)
-    data1 = np.sort(data1)
-    data2 = np.sort(data2)
-    data_all = np.concatenate([data1,data2])
-    cdf1 = np.searchsorted(data1,data_all,side='right')/(1.0*n1)
-    cdf2 = (np.searchsorted(data2,data_all,side='right'))/(1.0*n2)
 
-    d = np.max(np.absolute(cdf1-cdf2))
-    # Note: d absolute not signed distance
-    en = np.sqrt(n1*n2/float(n1+n2))
-    prob = stats.distributions.kstwobign.sf(en * d)
-
-    return d, prob
-
-d, en = ksprep(data1, data2)
-try:
-    prob = stats.distributions.kstwobign.sf(en * d)
-except:
-    prob = 1.0
-print(d, prob)
-
-G1, g1 = 0, 0
-G2, g2 = 0, 0
-G3, g3 = 0, 0
-G4, g4 = 0, 0
-
-for i in range(1000):
-    data3, data4 = DIST['Ami'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
-    data5, data6 = DIST['Ami2'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
-    data7, data8 = DIST['Abr'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
-    data1, data2 = DIST['Art'].rvs(size=SIZES['Art']), DIST['K'].rvs(size=SIZES['K'])
-
-    kstest1 = ksprep(data3, data4)
-    kstest2 = ksprep(data5, data6)
-    kstest3 = ksprep(data7, data8)
-    kstest4 = ksprep(data1, data2)
-   
-    G1 += kstest1[0]
-    g1 += kstest1[1]
-    G2 += kstest2[0]
-    g2 += kstest2[1]
-    G3 += kstest3[0]
-    g3 += kstest3[1]
-    G4 += kstest4[0]
-    g4 += kstest4[1]
-G1 /= 1000
-g1 /= 1000
-G2 /= 1000
-g2 /= 1000
-G3 /= 1000
-g3 /= 1000    
-G4 /= 1000
-g4 /= 1000 
-
-print('KS 1', G1, g1)
-print('KS 2', G2, g2)
-print('KS 3', G3, g3)
-print('KS 4', G4, g4)
-
-print('-------')
-#for i in range(1000):
-#    # KS for each pop
-#    for i, pdf in enumerate(objects2):
-#        ni = SIZES[pdf]
-#        data1_ = DIST[pdf].rvs(size=ni)
-#    
-#    for i, pdf in enumerate(objects2):
-#        prob_mult = 1
-#        d, en = ksprep(data1_, data2)
-#        try:
-#            prob = stats.distributions.kstwobign.sf(np.sqrt(ni) * d / best_phi[i])
-#        except:
-#            prob = 1.0
-#        prob_mult *= 1-prob
-#        print('Region %03s: d=%.2f prob=%f%%' % (pdf, d, 100*prob))
-#    print('prob mult=%.5f%%' % (1-prob_mult))
-
+# Plot the probability density functions (PDFs) generated in the previous scenarios (A1-A4):
 f, ax = plt.subplots()
 plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
+# PDF of a no-abrasion case.
 ax.plot(x, PDF['K'], label='Observed', color = '0.6')
 ax.fill_between(x, 0, PDF['K'].as_matrix().flatten(), color = '0.6')
+# PDF of a no-abrasion case.
 ax.plot(x, PDF['Ami'], 'b',
            label='1')
 ax.plot(x, PDF['Ami2'], 'y',
@@ -445,16 +368,11 @@ leg.get_frame().set_edgecolor('k')
 ax.set_xlabel('Age [Ma]')
 ax.set_ylabel('Relative probability')
 ax.set_title('PDPs (X)')
-#textstr = 'Mismatch = %.2f%%\nSimilarity = %.2f\nKS test = %.3f' % (rel_error, S, kstest.statistic)
-#props = dict(boxstyle='round', facecolor='white', alpha=1.0)
-#ax.text(0.7, 0.5, transform=ax.transAxes,
-#        verticalalignment='center', bbox=props)
 f.savefig(figpath+'pdf_mix_K_E.pdf', bbox_inches='tight')
 f.savefig(figpath+'pdf_mix_K_E.png', bbox_inches='tight')
 
 ## Create PDF crossplots
 x = [PDF['K'].as_matrix().flatten(), PDF['Ami'].as_matrix().flatten(), PDF['Ami2'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten()]
-#x = {'PDF[E]': (PDF['E'].as_matrix().flatten()), 'PDF[Art]': (PDF['Art'].as_matrix().flatten()), 'PDF[Ami]': (PDF['Ami'].as_matrix().flatten()), 'PDF[Abr]': (PDF['Abr'].as_matrix().flatten()}
 
 gx = 'PDF[K]'
 zx = ['PDF[K]', 'PDF[Ami]', 'PDF[Ami2]', 'PDF[Abr]', 'PDF[Art]']
