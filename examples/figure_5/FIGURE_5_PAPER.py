@@ -25,7 +25,6 @@
 ##=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 # Importing modules to perform calculations.
-
 import numpy as np
 
 ###############################################################################
@@ -40,16 +39,17 @@ import numpy as np
 
 DataDirectory = r'D:/Chrystiann Lavarini/Universidade/Doutorado/PhD Project/MODEL/' 
 
-# These files were extracted through ModelBuilder in ArcGIS.                  #
+# These files were extracted through ModelBuilder in ArcGIS.                 
+# They represent elevation.
+FileName = 'MARS_90_DEM_PT.dbf' 
+# They represent flow accumulation.
+FileName1 = 'F_ACC_MARS_90_PT.dbf'
+# They represent lithological unity with extended Formation II/III.
+FileName2 = 'EXT_GEO_MARS_K_BASIN.dbf'
+# They represent flow length.
+FileName3 = 'F_LEN_MARS_90_PT.dbf' 
 
-FileName = 'MARS_90_DEM_PT.dbf' # They represent elevation.
-FileName1 = 'F_ACC_MARS_90_PT.dbf' # They represent flow accumulation.
-FileName2 = 'EXT_GEO_MARS_K_BASIN.dbf'  # They represent lithological unity with extended Formation II/III.
-#FileName2 = 'GEO_MARS_ORI_90_.dbf'  # They represent lithological unity with original Formation II/III.
-FileName3 = 'F_LEN_MARS_90_PT.dbf' # They represent flow length.
-
-# Creates series of arrays to perform calculations.                           #
-                                                                                        
+# Creates series of arrays to perform calculations.                                                                                                                 
 PC_zir_ALL = [] 
 bedloadratio_ALL = [] 
 PC_sus_ALL = [] 
@@ -61,30 +61,26 @@ PC_pixels_ALL = []
 #                             Using dbfread                                   #
 #                                                                             #                     
 ###############################################################################
-
 from dbfread import DBF
-
-# Spatial coordinantes (x, y) and elevation (z) are collected (from FileName).# 
-
+# Spatial coordinantes (x, y) and elevation (z) are collected (from FileName). 
 dbffile = DBF(DataDirectory + FileName)
 x = []
 y = []
 z = []
 
+# Iterate to record variables:
 for record in dbffile:
     x.append(record['x'])
     y.append(record['y'])
     z.append(record['grid_code'])
 
-#   Area (area) of every lithological unity is collected (from FileName1).    #
-
+# Area (area) of every lithological unity is collected (from FileName1).    
 dbffile = DBF(DataDirectory + FileName1)
 area = []
 for record in dbffile:
     area.append(record['grid_code'])
 
-#        Every lithological unity is collected (from FileName2).              #
-
+# Every lithological unity is collected (from FileName2).             
 dbffile = DBF(DataDirectory + FileName2)
 litho = []
 for record in dbffile:
@@ -102,8 +98,7 @@ for n,i in enumerate(LITHO): # A subsitution is made here because some        #
                              # should be fixed by lithology 1 (Tethys unity). #
 ###############################################################################        
       
-# Flow length is collected (from FileName3)                                   #
-
+# Flow length is collected (from FileName3)                                   
 dbffile = DBF(DataDirectory + FileName3)
 length = []
 for record in dbffile:
@@ -116,19 +111,14 @@ for record in dbffile:
 ###############################################################################        
    
 #Set parameters for model:
-    
-pixel_size=90 # Pixel size in meters, used to calculate volumes but not     #
-                # essential for percentages provided at the end.              #
-eros=0.001 # uniform erosion rate, in m/yr, used to calculate volumes but not #
-           # essential for percentages provided at the end.                   #
-
-###############################################################################        
-#  future development: spatially variable erosion based on published data     #
-###############################################################################        
-
+# Pixel size in meters
+pixel_size=90 
+# uniform erosion rate, in m/yr, used to calculate volumes but not #
+eros=0.001 
+# Number of lithologies
 n_lithos = len(set(LITHO))
 litho_names = []
-
+# Give a name for lithologies
 for i in LITHO:
     if LITHO[i] ==1:
         litho_names.append('Tethyan series')
@@ -141,28 +131,14 @@ for i in LITHO:
     else:
         litho_names.append('Lesser Hyamalaia')
 
-###############################################################################
-# Abrasion coefficient from Attal & Lave (2006)   for the ORIGINAL 
-###############################################################################
-   
-#erod1=4.30  #      erodibility coefficient of litho 1, in % mass loss/km    #
-#erod2=0.40  #           erodibility coefficient of litho 2.                 #
-#erod3=0.40  #             erodibility coefficient of litho 3.               #
-#erod4=1.24  #             erodibility coefficient of litho 4.               #
-#erod5=9.42 #            erodibility coefficient of litho 5.                #
-
-###############################################################################
-# Abrasion coefficient from Attal & Lave (2006)   for the EXTENDED
-###############################################################################
-
+# This averages were calculated from a weighted arithmetic mean of Attal and Lave (2006).
 #erod1=4.3  #      erodibility coefficient of litho 1, in % mass loss/km    #
 #erod2=0.4  #      erodibility coefficient of litho 1, in % mass loss/km    #
 #erod3=0.4 #             erodibility coefficient of litho 3.               #
 #erod4=1.23 #             erodibility coefficient of litho 4.               #
 #erod5=9.42  #            erodibility coefficient of litho 5.                #
    
-# This averages were calculated from a weighted arithmetic mean of Attal and Lave (2006).
-
+# No abrasion happening.
 erod1=0  #      erodibility coefficient of litho 1, in % mass loss/km    #
 erod2=0  #           erodibility coefficient of litho 2.                 #
 erod3=0 #             erodibility coefficient of litho 3.               #
@@ -171,6 +147,7 @@ erod5=0 #            erodibility coefficient of litho 5.                #
 
 erod=[erod1, erod2, erod3, erod4, erod5]
 
+# Equal fertility for all source except for Manaslu granite.
 fert1=0.1        #    fraction of rock type 1 that is zircon ('fertility') #
 fert2=0.1       #           fraction of rock type 2 that is zircon        #
 fert3=0      #           fraction of rock type 3 that is zircon        #
@@ -178,37 +155,7 @@ fert4=0.1       #           fraction of rock type 4 that is zircon        #
 fert5=0.1       #           fraction of rock type 5 that is zircon        #
 
 ###############################################################################
-#  Data of Amidon et al. (2005b) where grain/gram to GEOL_1  #
-###############################################################################
-
-#fert1=5.6        #    fraction of rock type 1 that is zircon ('fertility') #
-#fert2=0.83        #           fraction of rock type 2 that is zircon        #
-#fert3=0.00       #           fraction of rock type 3 that is zircon        #
-#fert4=6.48       #           fraction of rock type 4 that is zircon        #
-#fert5=2.13       #           fraction of rock type 5 that is zircon        #
-
-###############################################################################
-#  Data of Amidon et al. (2005b) where grain/gram to LITHO_POINT  #
-###############################################################################
-
-#fert1=5.6        #    fraction of rock type 1 that is zircon ('fertility') #
-#fert2=3.1        #           fraction of rock type 2 that is zircon        #
-#fert3=0.00       #           fraction of rock type 3 that is zircon        #
-#fert4=6.48       #           fraction of rock type 4 that is zircon        #
-#fert5=2.13       #           fraction of rock type 5 that is zircon        #
-
-###############################################################################
-#  Data of Amidon et al. (2005b) where data was converted to weight percent   #
-###############################################################################
-
-#fert1=0.36        #    fraction of rock type 1 that is zircon ('fertility') #
-#fert2=0.07        #           fraction of rock type 2 that is zircon        #
-#fert3=0.00       #           fraction of rock type 3 that is zircon        #
-#fert4=0.465       #           fraction of rock type 4 that is zircon        #
-#fert5=0.145       #           fraction of rock type 5 that is zircon        #
-
-###############################################################################
-#  Data of Amidon et al. (2005b) where data was kept as ratios  for litho1    #
+#  Data of Amidon et al. (2005b)
 ###############################################################################
 
 #fert1=0.57        #    fraction of rock type 1 that is zircon ('fertility') #
@@ -216,26 +163,6 @@ fert5=0.1       #           fraction of rock type 5 that is zircon        #
 #fert3=0.00000       #           fraction of rock type 3 that is zircon        #
 #fert4=0.81       #           fraction of rock type 4 that is zircon        #
 #fert5=0.32       #           fraction of rock type 5 that is zircon        #
-
-###############################################################################
-#  Data of Amidon et al. (2005b) where data was kept as ratios  for geol_1    #
-###############################################################################
-
-#fert1=0.57        #    fraction of rock type 1 that is zircon ('fertility') #
-#fert2=0.1        #           fraction of rock type 2 that is zircon        #
-#fert3=0.00000       #           fraction of rock type 3 that is zircon        #
-#fert4=0.81       #           fraction of rock type 4 that is zircon        #
-#fert5=0.32       #           fraction of rock type 5 that is zircon        #
-###############################################################################
-#       Unplished data of France-Lanord (2005b)on weight percent              #
-###############################################################################
-
-#fert1=0.54        #    fraction of rock type 1 that is zircon ('fertility') #
-#fert2=0.22       #           fraction of rock type 2 that is zircon        #
-#fert3=0.00       #           fraction of rock type 3 that is zircon        #
-#fert4=0.57       #           fraction of rock type 4 that is zircon        #
-#fert5=0.165       #           fraction of rock type 5 that is zircon        #
-
 
 fert=[fert1, fert2, fert3, fert4, fert5]
 
