@@ -324,166 +324,110 @@ ax.set_xlabel('Age [Ma]')
 ax.set_ylabel('Relative probability')
 ax.set_title('PDPs')
 # Save plot:
-f.savefig(figpath+'pdf_mix_K_E.pdf', bbox_inches='tight')
-f.savefig(figpath+'pdf_mix_K_E.png', bbox_inches='tight')
+f.savefig(figpath+'pdf_mix_K_fig_4.pdf', bbox_inches='tight')
+f.savefig(figpath+'pdf_mix_K_fig_4.png', bbox_inches='tight')
 
-## Create PDF crossplots
-x = [PDF['Ami'].as_matrix().flatten(), PDF['Ami2'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten(), PDF['Art3'].as_matrix().flatten(), PDF['Art31'].as_matrix().flatten()]
-x1 = [PDF['Ami'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art3'].as_matrix().flatten(), PDF['Art4'].as_matrix().flatten()]
-x2 = [PDF['Ami2'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten(),PDF['Art31'].as_matrix().flatten(), PDF['Art41'].as_matrix().flatten()]
-
-gx1 = ['PDF[Ami]', 'PDF[Abr]', 'PDF[Art3]', 'PDF[Art4]', 'PDF[Art5]']
-gx2 = ['PDF[Ami2]','PDF[Art]','PDF[Art31]', 'PDF[Art41]', 'PDF[Art51]']
-axmin, axmax = min([min(x[0]), min(x[1])]), max([max(x[0]), max(x[1])])
-axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
-
-for i,j in zip(x1,x2):
-        X = sm.add_constant(j)
-        reg = sm.OLS(i, X).fit()
-        sns.set(style='ticks', font_scale=1.5)
-        
-        # Pretty
-        cm = plt.cm.get_cmap('RdYlBu')
-        f, ax = plt.subplots()
-        ax.plot(j, reg.predict(X), 'k', label=r'$R^2 = %.3f$' % reg.rsquared)
-        sc = ax.scatter(j, i, s=50, alpha=0.6, c=range(4001), facecolors='none', cmap=cm, vmin=0, vmax=4000 )
-        ax.set_xlabel('gx1')
-        ax.set_ylabel('gx2')
-        #sns.despine(ax=ax)
-        plt.ticklabel_format(style='sci', scilimits=(-2,2))   
-        plt.axis('equal')
-        ax.set_xlim([axmin, axmax])
-        ax.set_ylim([axmin, axmax])
-        plt.legend(loc=4)
-        cbar=plt.colorbar(sc)
-        cbar.solids.set_edgecolor("face")
-        plt.draw()
-        f.savefig(figpath+'crossplotpdf_K_e.png', bbox_inches='tight')
-        f.savefig(figpath+'crossplotpdf_K_e.pdf', bbox_inches='tight')
-
-# Create CDFs
+# Create CDFs for Q-Q plots
+# Measuring dx:
 dx = PDF['K'].index[1] - PDF['K'].index[0] 
+# CDF of no-abrasion case:
 xa = cumtrapz(PDF['Ami'].as_matrix().flatten(), dx=dx)
+# CDF of erosion scenario:
 xb = cumtrapz(PDF['Ami2'].as_matrix().flatten(), dx=dx)
+# CDF of no-abrasion case:
 za = cumtrapz(PDF['Abr'].as_matrix().flatten(), dx=dx)
+# CDF of fertility scenario:
 zb = cumtrapz(PDF['Art'].as_matrix().flatten(), dx=dx)
+# CDF of no-abrasion case:
 ya = cumtrapz(PDF['Art3'].as_matrix().flatten(), dx=dx)
+# CDF of gravel scenario:
 yb = cumtrapz(PDF['Art31'].as_matrix().flatten(), dx=dx)
+# CDF of no-abrasion case:
 ka = cumtrapz(PDF['Art4'].as_matrix().flatten(), dx=dx)
+# CDF of abrasion scenario:
 kb = cumtrapz(PDF['Art41'].as_matrix().flatten(), dx=dx)
 
+# Max and min of values
 axmin, axmax = min([min(xa), min(xb)]), max([max(xa), max(xb)])
 axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
 
+# Set the Y axis:
 Xa = sm.add_constant(xb)
 Xb = sm.add_constant(zb)
 Xc = sm.add_constant(yb)
 Xd = sm.add_constant(kb)
 
+# Set the X axis for regression:
 reg0 = sm.OLS(xa, Xa).fit()
 reg1 = sm.OLS(za, Xb).fit()
 reg2 = sm.OLS(ya, Xc).fit()
 reg3 = sm.OLS(ka, Xd).fit()
 
-#sns.set(style='ticks', font_scale=1.5)
+# Plot the CDFs:
 f, ax = plt.subplots()
 ax.plot(xa, xb, 'k')
 
+# CDF of erosion scenario:
 ax.scatter(xa, xb,  s=50, alpha=0.6, edgecolor='b', facecolors='none', label=r'$R^2 = %.3f$' % reg0.rsquared)
+# CDF of fertility scenario:
 ax.scatter(za, zb, s=50, alpha=0.6, edgecolor='g', facecolors='none', label=r'$R^2 = %.3f$' % reg1.rsquared)
+# CDF of gravel scenario:
 ax.scatter(ya, yb, s=50, alpha=0.6, edgecolor='y', facecolors='none',label=r'$R^2 = %.3f$' % reg2.rsquared)
+# CDF of abrasion scenario:
 ax.scatter(ka, kb, s=50, alpha=0.6, edgecolor='c', facecolors='none',label=r'$R^2 = %.3f$' % reg3.rsquared)
-
-ax.set_xlabel('Abrasion-driven CDFs')
-ax.set_ylabel('Erosion-driven CDFs')
+# Set the legends:
+ax.set_xlabel('CDFs [Tested factors]')
+ax.set_ylabel('CDFs [Target factors]')
 ax.set_title('Q-Q plots')
-#sns.despine(ax=ax)
 ax.set_xlim([axmin, axmax])
 ax.set_ylim([axmin, axmax])
 plt.legend(loc=4)
 leg.get_frame().set_edgecolor('k')
+# Save the plot:
 f.savefig(figpath+'crossplotcdf_G.png', bbox_inches='tight')
 f.savefig(figpath+'crossplotcdf_G.pdf', bbox_inches='tight')
 
 # Making PDF cross-plots
-
+# List with a PDF for each scenario:
+# PDFs made with no factor
 x1 = [PDF['Ami'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art3'].as_matrix().flatten(), PDF['Art4'].as_matrix().flatten()]
+# PDFs made with testing factors:
 x2 = [PDF['Ami2'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten(),PDF['Art31'].as_matrix().flatten(), PDF['Art41'].as_matrix().flatten()]
-
+# Set the Y axis:
 X1 = sm.add_constant(x2[0])
 X2 = sm.add_constant(x2[1])
 X3 = sm.add_constant(x2[2])
 X4 = sm.add_constant(x2[3])
-
-
+# Set the X axis for regression:
 reg1 = sm.OLS(x1[0], X1).fit()
 reg2 = sm.OLS(x1[1], X2).fit()
 reg3 = sm.OLS(x1[2], X3).fit()
 reg4 = sm.OLS(x1[3], X4).fit()
 
-
+# Set the plot style:
 sns.set(style='ticks', font_scale=1.5)
 
-# Pretty
-#cm = plt.cm.get_cmap('RdYlBu')
+# Plot the PDF crossplots:
 f, ax = plt.subplots()
+# PDF of a no-abrasion case:
 ax.plot(x1[0], x2[0])
+# PDF of erosion scenario:
 ax.scatter(x1[0], x2[0],  s=50, alpha=0.6, edgecolor='b', facecolors='none', label=r'$R^2 = %.3f$' % reg1.rsquared)
+# PDF of fertility scenario:
 ax.scatter(x1[1], x2[1], s=50, alpha=0.6, edgecolor='g', facecolors='none', label=r'$R^2 = %.3f$' % reg2.rsquared)
+# PDF of gravel scenario:
 ax.scatter(x1[2], x2[2], s=50, alpha=0.6, edgecolor='y', facecolors='none',label=r'$R^2 = %.3f$' % reg3.rsquared)
+# PDF of abrasion scenario:
 ax.scatter(x1[3], x2[3], s=50, alpha=0.6, edgecolor='c', facecolors='none',label=r'$R^2 = %.3f$' % reg4.rsquared)
-
-#ax.scatter(x[0], i, s=50, alpha=0.6, c=range(4001), facecolors='none', cmap=cm, vmin=0, vmax=4000 )
+# Set the legends:
 ax.set_title('PDF cross-plots')
-ax.set_xlabel('Abrasion-driven PDFs')
-ax.set_ylabel('Erosion-driven PDFs')
-#sns.despine(ax=ax)
+ax.set_xlabel('Tested PDFs')
+ax.set_ylabel('Target PDFs')
 plt.ticklabel_format(style='sci', scilimits=(-2,2))   
-#plt.axis('equal')
-#ax.set_xlim([axmin, axmax])
-#ax.set_ylim([axmin, axmax])
 plt.legend(loc=4)
 leg.get_frame().set_edgecolor('k')
-
-# Three subplots sharing both x/y axes
-f, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, sharey=False)
-#ax1.plot(sample, ero1)
-width = 0.10
-ax.set_title('PDPs')
-ax.set_ylabel('Relative probability')
-
-x = PDF['Ami'].index
-
-ax1.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
-ax2.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
-ax3.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
-
-#ax.plot(x, PDF['K'], label='Observed', color = '0.6')
-#ax.fill_between(x, 0, PDF['K'].as_matrix().flatten(), color = '0.6')
-ax1.plot(x, PDF['Ami'], 'b',
-           label='1a')
-ax1.plot(x, PDF['Ami2'], '--b',
-           label='1b')
-ax2.plot(x, PDF['Abr'], 'g',
-           label='2a')
-ax2.plot(x, PDF['Art'], '--g',
-           label='2b')
-ax3.plot(x, PDF['Art3'], 'y',
-           label='3a')
-ax3.plot(x, PDF['Art31'], '--y',
-           label='3b')
-
-
-handles, labels = ax.get_legend_handles_labels()
-leg = ax.legend(handles, labels, frameon=True, fancybox=True, fontsize=18)
-leg.get_frame().set_edgecolor('k')
-ax3.set_xlabel('Age [Ma]')
-ax3.set_ylabel('Relative probability')
-ax1.set_xlim(300, 1500)
-# Fine-tune figure; make subplots close to each other and hide x ticks for
-# all but bottom plot.
-plt.legend()
-f.subplots_adjust(hspace=0)
-plt.setp([a.get_xticklabels() for a in f.axes[:-1]], visible=False)
+# Save the plot:
+f.savefig(figpath+'crossplotpdf_K2.png', bbox_inches='tight')
+f.savefig(figpath+'crossplotpdf_K2.pdf', bbox_inches='tight')
 
 
