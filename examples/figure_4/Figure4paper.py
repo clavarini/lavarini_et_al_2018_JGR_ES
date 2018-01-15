@@ -122,37 +122,55 @@ SIZES = {}
 for sheet in sheets:
     PDF[sheet], SIZES[sheet] = generate_pdf(filename, sheet, smooth=80, plot=False)
 
-     
-#phi_ami = [0.331, 0.194, 0.229, 0.246] # Max abrasion
-phi_no = [0.271, 0.175, 0.235, 0.319]  # No variables
+# Testing the influence of controlling factors in zircon mixing proportion
+
+# No factors occurring. 
+# Values of mixing proportions from pABRASIONmodel where 0 %/km was used for all sources (i.e., no abrasion case)
+phi_no = [0.271, 0.175, 0.235, 0.319]  
+# Create PDF
 PDF['Ami'] = phi_no[0]*PDF['A'] + phi_no[1]*PDF['C'] + \
-         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] # No variables
-
-phi_ami2 = [0.654, 0.083, 0.111, 0.152] # Max erosion (5.1 for TTS and 1 for the rest)
-
+         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] 
+ 
+# Erosion.
+# Values of mixing proportions from pABRASIONmodel where TTS erodes at 5.1 mm/yr and the rest at 1.0 mm/yr.
+phi_ami2 = [0.654, 0.083, 0.111, 0.152]
+# Create PDF
 PDF['Ami2'] = phi_ami2[0]*PDF['A'] + phi_ami2[1]*PDF['C'] + \
          phi_ami2[2]*PDF['F'] + phi_ami2[3]*PDF['H']
-
+ 
+# No factors occurring. 
+# Values of mixing proportions from pABRASIONmodel where 0 %/km was used for all sources (i.e., no abrasion case)
+# Create PDF
 PDF['Abr'] = phi_no[0]*PDF['A'] + phi_no[1]*PDF['C'] + \
-         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] # No variables
+         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] 
 
-#PDF['Art'] = 1*PDF['A'] + 0*PDF['C'] + 0*PDF['F'] + 0*PDF['H'] # Max fertility (8.1 for TTS and 0 for rest)
-#PDF['Art'] = 0.492*PDF['A'] + 0.122*PDF['C'] + 0.164*PDF['F'] + 0.222*PDF['H'] # Max fertility (8.1 for TTS and 3.1 for rest)
-PDF['Art'] = 0.75*PDF['A'] + 0.06*PDF['C'] + 0.08*PDF['F'] + 0.11*PDF['H'] # Max fertility (8.1 for TTS and 1 for rest)
+# Zircon fertility 
+# Values of mixing proportions from pABRASIONmodel where 8.1 grains/g for TTS and 0 grains/g for rest
+# Create PDF
+PDF['Art'] = 1*PDF['A'] + 0*PDF['C'] + 0*PDF['F'] + 0*PDF['H'] 
 
-
+# No factors occurring. 
 PDF['Art3'] = phi_no[0]*PDF['A'] + phi_no[1]*PDF['C'] + \
          phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] # No variables
-PDF['Art31'] = 0.565*PDF['A'] + 0.104*PDF['C'] + 0.14*PDF['F'] + 0.191*PDF['H'] # Max grain-size (0.5 for TTS and 0.15 for the rest)
-#PDF['Art31'] = 0.464*PDF['A'] + 0.128*PDF['C'] + 0.173*PDF['F'] + 0.235*PDF['H'] # Max grain-size (0.35 for TTS and 0.15 for the rest)
 
-phi_abr = [0.525, 0.129, 0.158, 0.188] # Max abrasion (31 for TTS and 0.15 for the rest)
+# Hillslope gravel supply
+# Values of mixing proportions from pABRASIONmodel where 50% of sediments from TTS is sand and 15% of the remaining 
+# watershed supplies sand.
+# Create PDF
+PDF['Art31'] = 0.565*PDF['A'] + 0.104*PDF['C'] + 0.14*PDF['F'] + 0.191*PDF['H'] 
 
+# Pebble abrasion rate
+# Values of mixing proportions from pABRASIONmodel where 31 %/km was used for TTS
+# and 0.15  %/km for all other sources (i.e., no abrasion case)
+phi_abr = [0.525, 0.129, 0.158, 0.188] 
+# Create PDF
 PDF['Art41'] = phi_abr[0]*PDF['A'] + phi_abr[1]*PDF['C'] + \
-         phi_abr[2]*PDF['F'] + phi_abr[3]*PDF['H'] # Max abrasion
+         phi_abr[2]*PDF['F'] + phi_abr[3]*PDF['H'] 
+ 
+# No factors occurring. 
 PDF['Art4'] = phi_no[0]*PDF['A'] + phi_no[1]*PDF['C'] + \
-         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] # No variables
-
+         phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] 
+ 
 S1 = np.sqrt(PDF['Ami']*PDF['Ami2']).sum()
 M1 = np.abs(PDF['Ami']-PDF['Ami2']).sum()/2
 L1 = 1-M1
