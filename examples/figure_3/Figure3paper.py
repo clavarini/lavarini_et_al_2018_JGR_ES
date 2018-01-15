@@ -157,6 +157,8 @@ for i in range(30):
         print()
         print('New best cost: ', lowest_cost)
         print('New best phi:  ', best_phi)
+        
+        
 # Scenario A1
 # Testing the influence of abrasion in zircon mixing proportion
 # Values of mixing proportions from pABRASIONmodel where 0.4%/km was used for all sources
@@ -174,6 +176,7 @@ print('-------')
 print('Mismatch:', newcost)
 print('Zircon mixing proportion:', phi_ami)
 
+
 # Scenario A2
 # Testing the influence of abrasion in zircon mixing proportion
 # Values of mixing proportions from pABRASIONmodel where 31.0 %/km was used for the TTS and 0.15 for all rest
@@ -188,56 +191,90 @@ newcost2 = np.trapz(abs(PDF['Ami2']-PDF['K']).as_matrix().flatten(),
 newcost2 = newcost2*100
 # Print the mismatch and zircon mixing proportion:
 print('-------')
-print('Lowest mismatch Amidon paper:', newcost2)
-print('Best phi Amidon paper:', phi_ami2)
+print('Mismatch:', newcost2)
+print('Zircon mixing proportion:', phi_ami2)
 
-phi_abr = [0.192, 0.115, 0.140, 0.553] # 31 for the last. 0.15 for all rest
 
+# Scenario A3
+# Testing the influence of abrasion in zircon mixing proportion
+# Values of mixing proportions from pABRASIONmodel where 31.0 %/km was used for the LH and 0.15 for all rest
+phi_abr = [0.192, 0.115, 0.140, 0.553] 
+# Generate PDFs
 PDF['Abr'] = phi_abr[0]*PDF['A'] + phi_abr[1]*PDF['C'] + \
          phi_abr[2]*PDF['F'] + phi_abr[3]*PDF['H']
 g = PDF['Abr'].index
+# Calculate area mismatch between the above PDF and a PDF with no-abrasion
 newcost3 = np.trapz(abs(PDF['Abr']-PDF['K']).as_matrix().flatten(),
                       dx=x[2]-x[1])/2
 newcost3 = newcost3*100
+# Print the mismatch and zircon mixing proportion:
 print('-------')
-print('Lowest mismatch Abrasion:', newcost3)
-print('Best phi Abrasion:', phi_abr)
+print('Mismatch:', newcost3)
+print('Zircon mixing proportion:', phi_abr)
 
-# Calculate error
-PDF['Art'] = 0.318*PDF['A'] + 0.112*PDF['C'] + 0.207*PDF['F'] + 0.363*PDF['H'] #real values of abrasion
+# Scenario A4
+# Testing the influence of abrasion in zircon mixing proportion
+# Values of mixing proportions from pABRASIONmodel where the values are the same found by Attal and Lave [2006].
+PDF['Art'] = 0.318*PDF['A'] + 0.112*PDF['C'] + 0.207*PDF['F'] + 0.363*PDF['H'] 
 
+
+# Statistical comparison of the PDFs generated in the scenarios above (A1 to A4):
+
+# Scenario A1
+# Similarity
 S1 = np.sqrt(PDF['Ami']*PDF['K']).sum()
+# Mismatch
 M1 = np.abs(PDF['Ami']-PDF['K']).sum()/2
+# Likeness
 L1 = 1-M1
-
-S2 = np.sqrt(PDF['Ami2']*PDF['K']).sum()
-M2 = np.abs(PDF['Ami2']-PDF['K']).sum()/2
-L2 = 1-M2
-
-S3 = np.sqrt(PDF['Abr']*PDF['K']).sum()
-M3 = np.abs(PDF['Abr']-PDF['K']).sum()/2
-L3 = 1-M3
-
-S4 = np.sqrt(PDF['Art']*PDF['K']).sum()
-M4 = np.abs(PDF['Art']-PDF['K']).sum()/2
-L4 = 1-M4
-
+# Display results
+print('--------')
 print('S1 =', S1)
-print('S2 =', S2)
-print('S3 =', S3)
-print('S4 =', S4)
-
-print('-------')
 print('M1 =', M1)
-print('M2 =', M2)
-print('M3 =', M3)
-print('M4 =', M4)
-
-print('-------')
 print('L1 =', L1)
+print('--------')
+
+# Scenario A2
+# Similarity
+S2 = np.sqrt(PDF['Ami2']*PDF['K']).sum()
+# Mismatch
+M2 = np.abs(PDF['Ami2']-PDF['K']).sum()/2
+# Likeness
+L2 = 1-M2
+# Display results
+print('--------')
+print('S2 =', S2)
+print('M2 =', M2)
 print('L2 =', L2)
+print('--------')
+
+# Scenario A3
+# Similarity
+S3 = np.sqrt(PDF['Abr']*PDF['K']).sum()
+# Mismatch
+M3 = np.abs(PDF['Abr']-PDF['K']).sum()/2
+# Likeness
+L3 = 1-M3
+# Display results
+print('--------')
+print('S3 =', S3)
+print('M3 =', M3)
 print('L3 =', L3)
+print('--------')
+
+# Scenario A4
+# Similarity
+S4 = np.sqrt(PDF['Art']*PDF['K']).sum()
+# Mismatch
+M4 = np.abs(PDF['Art']-PDF['K']).sum()/2
+# Likeness
+L4 = 1-M4
+# Display results
+print('--------')
+print('S4 =', S4)
+print('M4 =', M4)
 print('L4 =', L4)
+print('--------')
 
 rel_error1 = np.trapz(abs(PDF['Art']-PDF['K']).as_matrix().flatten(),
                      dx=x[2]-x[1])/2
