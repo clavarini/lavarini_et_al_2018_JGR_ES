@@ -353,101 +353,67 @@ plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
 # PDF of a no-abrasion case.
 ax.plot(x, PDF['K'], label='Observed', color = '0.6')
 ax.fill_between(x, 0, PDF['K'].as_matrix().flatten(), color = '0.6')
-# PDF of a no-abrasion case.
+# PDF of scenario A1:
 ax.plot(x, PDF['Ami'], 'b',
            label='1')
+# PDF of scenario A2:
 ax.plot(x, PDF['Ami2'], 'y',
            label='2')
+# PDF of scenario A3:
 ax.plot(x, PDF['Abr'], 'g',
            label='3')
+# PDF of scenario A4:
 ax.plot(x, PDF['Art'], 'r',
            label='4')
 handles, labels = ax.get_legend_handles_labels()
+# Legend:
 leg = ax.legend(handles, labels, frameon=True, fancybox=True, fontsize=18)
 leg.get_frame().set_edgecolor('k')
 ax.set_xlabel('Age [Ma]')
 ax.set_ylabel('Relative probability')
 ax.set_title('PDPs (X)')
+# Save plot:
 f.savefig(figpath+'pdf_mix_K_E.pdf', bbox_inches='tight')
 f.savefig(figpath+'pdf_mix_K_E.png', bbox_inches='tight')
 
-## Create PDF crossplots
-x = [PDF['K'].as_matrix().flatten(), PDF['Ami'].as_matrix().flatten(), PDF['Ami2'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten()]
-
-gx = 'PDF[K]'
-zx = ['PDF[K]', 'PDF[Ami]', 'PDF[Ami2]', 'PDF[Abr]', 'PDF[Art]']
-axmin, axmax = min([min(x[0]), min(x[1])]), max([max(x[0]), max(x[1])])
-axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
-
-# Linear fit
-# Don't forget to add ones to fit y = ax+b instead of y = ax
-X = sm.add_constant(x[0])
-for i in x:
-    reg = sm.OLS(i, X).fit()
-    sns.set(style='ticks', font_scale=1.5)
-    
-    # Pretty
-    cm = plt.cm.get_cmap('RdYlBu')
-    f, ax = plt.subplots()
-    ax.plot(x[0], reg.predict(X), 'k', label=r'$R^2 = %.3f$' % reg.rsquared)
-    sc = ax.scatter(x[0], i, s=50, alpha=0.6, c=range(4001), facecolors='none', cmap=cm, vmin=0, vmax=4000 )
-    ax.set_xlabel(gx)
-    ax.set_ylabel('PDF')
-    #sns.despine(ax=ax)
-    plt.ticklabel_format(style='sci', scilimits=(-2,2))   
-    plt.axis('equal')
-    ax.set_xlim([axmin, axmax])
-    ax.set_ylim([axmin, axmax])
-    plt.legend(loc=4)
-    cbar=plt.colorbar(sc)
-    cbar.solids.set_edgecolor("face")
-    plt.draw()
-    f.savefig(figpath+'crossplotpdf_K_e.png', bbox_inches='tight')
-    f.savefig(figpath+'crossplotpdf_K_e.pdf', bbox_inches='tight')
-
-# Create CDFs
+# Create CDFs for Q-Q plot
+# Measuring dx:
 dx = PDF['K'].index[1] - PDF['K'].index[0] 
+# CDF of no-abrasion case:
 x = cumtrapz(PDF['K'].as_matrix().flatten(), dx=dx)
+# CDF of scenario A1:
 y = cumtrapz(PDF['Art'].as_matrix().flatten(), dx=dx)
+# CDF of scenario A2:
 xh = cumtrapz(PDF['Ami'].as_matrix().flatten(), dx=dx)
+# CDF of scenario A3:
 xj = cumtrapz(PDF['Ami2'].as_matrix().flatten(), dx=dx)
+# CDF of scenario A4:
 jj = cumtrapz(PDF['Abr'].as_matrix().flatten(), dx=dx)
-
+# Max and min of values
 axmin, axmax = min([min(x), min(y)]), max([max(x), max(y)])
 axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
-bb = [x, xh, xj, jj, y]
-for i in bb:
-    X = sm.add_constant(x)
-    reg = sm.OLS(i, X).fit()
-    
-    sns.set(style='ticks', font_scale=1.5)
-    f, ax = plt.subplots()
-    ax.plot(x, reg.predict(X), 'k', label=r'$R^2 = %.3f$' % reg.rsquared)
-    ax.scatter(x, i, s=50, alpha=0.6, edgecolor=prp, facecolors='none')
-    ax.set_xlabel('CDF [K]')
-    ax.set_ylabel('CDF')
-    sns.despine(ax=ax)
-    ax.set_xlim([axmin, axmax])
-    ax.set_ylim([axmin, axmax])
-    plt.legend(loc=4)
-    f.savefig(figpath+'crossplotcdf_K_e'+ str(i)+'.png', bbox_inches='tight')
-    f.savefig(figpath+'crossplotcdf_K_e.pdf', bbox_inches='tight')
 
+# Set the Y axis:
 X = sm.add_constant(x)
+# Set the X axis for regression:
 reg0 = sm.OLS(y, X).fit()
 reg1 = sm.OLS(xh, X).fit()
 reg2 = sm.OLS(xj, X).fit()
 reg3 = sm.OLS(jj, X).fit()
 
-#sns.set(style='ticks', font_scale=1.5)
+# Plot the CDFs:
 f, ax = plt.subplots()
 ax.plot(x, x, 'k')
 
+# CDF of scenario A1:
 ax.scatter(x, y,  s=50, alpha=0.6, edgecolor='r', facecolors='none', label=r'$R^2 = %.3f$' % reg0.rsquared)
+# CDF of scenario A2:
 ax.scatter(x, xh, s=50, alpha=0.6, edgecolor='b', facecolors='none', label=r'$R^2 = %.3f$' % reg1.rsquared)
+# CDF of scenario A3:
 ax.scatter(x, xj, s=50, alpha=0.6, edgecolor='y', facecolors='none',label=r'$R^2 = %.3f$' % reg2.rsquared)
+# CDF of scenario A4:
 ax.scatter(x, jj, s=50, alpha=0.6, edgecolor='g', facecolors='none', label=r'$R^2 = %.3f$' % reg3.rsquared)
-
+# Set the legends:
 ax.set_xlabel('Artificial CDF [K]')
 ax.set_ylabel('Predicted CDFs')
 ax.set_title('Q-Q plot')
@@ -455,29 +421,45 @@ ax.set_xlim([axmin, axmax])
 ax.set_ylim([axmin, axmax])
 plt.legend(loc=4)
 leg.get_frame().set_edgecolor('k')
-f.savefig(figpath+'crossplotcdf_G.png', bbox_inches='tight')
-f.savefig(figpath+'crossplotcdf_G.pdf', bbox_inches='tight')
+# Save the plot:
+f.savefig(figpath+'crossplotcdf_K.png', bbox_inches='tight')
+f.savefig(figpath+'crossplotcdf_K.pdf', bbox_inches='tight')
 
+# PDF crossplots:
+# List with a PDF for each scenario (A1 to A4):
 x1 = [PDF['K'].as_matrix().flatten(), PDF['Ami'].as_matrix().flatten(), PDF['Ami2'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten()]
 
+# Set the Y axis:
 X = sm.add_constant(x1[0])
+# Set the X axis for regression:
 reg1 = sm.OLS(x1[1], X).fit()
 reg2 = sm.OLS(x1[2], X).fit()
 reg3 = sm.OLS(x1[3], X).fit()
 reg4 = sm.OLS(x1[4], X).fit()
 
+# Set the plot style:
 sns.set(style='ticks', font_scale=1.5)
 
-# Pretty
+# Plot the PDF crossplots:
 f, ax = plt.subplots()
+
+# PDF of a no-abrasion case:
 ax.plot(x1[0], x1[0], 'k')
+# PDF of scenario A1:
 ax.scatter(x1[0], x1[1],  s=50, alpha=0.6, edgecolor='b', facecolors='none', label=r'$R^2 = %.3f$' % reg1.rsquared)
+# PDF of scenario A2:
 ax.scatter(x1[0], x1[2], s=50, alpha=0.6, edgecolor='y', facecolors='none', label=r'$R^2 = %.3f$' % reg2.rsquared)
+# PDF of scenario A3:
 ax.scatter(x1[0], x1[3], s=50, alpha=0.6, edgecolor='g', facecolors='none',label=r'$R^2 = %.3f$' % reg3.rsquared)
+# PDF of scenario A4:
 ax.scatter(x1[0], x1[4], s=50, alpha=0.6, edgecolor='r', facecolors='none', label=r'$R^2 = %.3f$' % reg4.rsquared)
+# Set the legends:
 ax.set_title('PDF cross-plots')
 ax.set_xlabel('PDF')
 ax.set_ylabel('PDF')
 plt.ticklabel_format(style='sci', scilimits=(-2,2))   
 plt.legend(loc=4)
 leg.get_frame().set_edgecolor('k')
+# Save the plot:
+f.savefig(figpath+'crossplotpdf_K.png', bbox_inches='tight')
+f.savefig(figpath+'crossplotpdf_K.pdf', bbox_inches='tight')
