@@ -43,8 +43,11 @@ To know what each function does and the file extensions needed to perform the ca
     
 ### Examples
 
-A folder (examples) available in this repository has a series of code showing how we used the functions
-in our research paper. There are also examples of files that are required to correctly run the experiments. 
+A folder available in this repository has a series of examples showing how we used the functions
+in our research paper. 
+
+There are also examples of files that are required to correctly run the experiments. 
+
 All these files can be assessed through the cloned/downloaded repositories you have in your local machine.
 
 ## Built With
