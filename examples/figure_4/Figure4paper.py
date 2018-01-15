@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
-Created on Fri Mar  3 20:15:56 2017
-
-@author: s1465002
+ 
+Figure 4 (Figure4paper.py) is a series of code used to generate the figure 4
+in the work of Lavarini et al. [2018a].
+ Reference:
+     
+     Lavarini et al. [2018]. Does pebble abrasion influence detrital age 
+     population statistics? A numerical investigation of natural data sets. 
+     Journal of Geophysical Research - Earth Surface.
+     
+ Authors: C. Lavarini (lavarini.c@gmail.com), C. A. da Costa Filho & M. Attal
+ The University of Edinburgh, UK
+ December of 2017
+      
 """
 
-
+# Import modules
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import seaborn as sns
 import numpy as np
 import os
@@ -20,36 +30,26 @@ from scipy.integrate import cumtrapz
 import statsmodels.api as sm
 blu, grn, red, prp, yel, cyn = sns.color_palette()
 
+# Set the style
 sns.set(style='ticks', font_scale=1.5, 
         rc={'lines.linewidth': 2.5,
             'figure.figsize': (10, 8),
             'text.usetex': False,
-            # 'font.family': 'sans-serif',
-            # 'font.sans-serif': 'Optima LT Std',
         })
-
+# Set path to save figures:
 figpath = os.path.join('K_AGES/', 'marsyandi_')
 
-def generate_pdf(filename, sheet, smooth=80, plot=False):
+# Function to generate probability density functions (PDFs):
+def generate_pdf(filename, sheet, smooth=80, plot=True):
     df = pd.read_excel(filename, sheetname = sheet, skiprows=(0,))
-
-    # Keep only samples whose sample name starts with 504
-#    df = df[ df['sample'] != 'SL-13' ]
-#    df = df[ df['sample'] != 'xx' ]
 
     # Create single-column with the true age
     K = df[['Age (Ma)', 'Error (Ma)']]
     K.columns = ['m', 's']
     K.name = 'Sample '+sheet
 
-#    cond = (df['206Pb/238U.1'] + df['206Pb/207Pb.1'])/2 <= 1000
     K['m'] = df['Age (Ma)'] 
     K['s']  = df['Error (Ma)'] 
-
-#    K['m'][~cond] = df[~cond]['206Pb/207Pb.1'] 
-#    K['s'][~cond] = df[~cond]['± (Ma)'] 
-
-    # plt.ion()
 
     # Show Histogram
     if plot:
@@ -98,26 +98,30 @@ def generate_pdf(filename, sheet, smooth=80, plot=False):
         f.savefig(figpath+'pdf_smooth_'+sheet+'.png', bbox_inches='tight')
     return pdf, sample_size
 
-
-
-
 #######################
 ## Generate all PDFs ##
 #######################
+
 plt.ion()
+
+# Sheets with single source unit data
 sheets = ['A', 'C', 'F', 'H', 'K']
+
+# Filename containing the sheets
 filename = 'MARSYANDI_SYNTHETIC_1.xlsx'
+
+# Sheet names of single source units
 objects = ('A', 'C', 'K', 'H', 'F')
 objects2 = ('A', 'C', 'H', 'F')
 
+# Create a dictionary to store the PDFs and their sample sizes
 PDF = {}
 SIZES = {}
+
+# Loop over all the sheets (samples)
 for sheet in sheets:
     PDF[sheet], SIZES[sheet] = generate_pdf(filename, sheet, smooth=80, plot=False)
-#PDF['C+D'] = (PDF['C'] + PDF['D'])/(PDF['C'] + PDF['D']).sum()
-#SIZES['C+D'] = SIZES['C'] + SIZES['D']
-#PDF['H+I'] = (PDF['H'] + PDF['I'])/(PDF['H'] + PDF['I']).sum()
-#SIZES['H+I'] = SIZES['H'] + SIZES['I']
+
      
 #phi_ami = [0.331, 0.194, 0.229, 0.246] # Max abrasion
 phi_no = [0.271, 0.175, 0.235, 0.319]  # No variables
