@@ -46,9 +46,9 @@ To know what each function does and the file extensions needed to perform the ca
 A folder available in this repository has a series of examples showing how we used the functions
 in our research paper. 
 
-There are also examples of files that are required to correctly run the experiments. 
+There are also examples of files that are required to run the experiments correctly. 
 
-All these files can be assessed through the cloned/downloaded repositories you have in your local machine.
+All files can be assessed through the cloned/downloaded repositories in your local machine.
 
 ## Built With
 
