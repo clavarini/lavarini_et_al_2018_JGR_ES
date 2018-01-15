@@ -170,36 +170,47 @@ PDF['Art41'] = phi_abr[0]*PDF['A'] + phi_abr[1]*PDF['C'] + \
 # No factors occurring. 
 PDF['Art4'] = phi_no[0]*PDF['A'] + phi_no[1]*PDF['C'] + \
          phi_no[2]*PDF['F'] + phi_no[3]*PDF['H'] 
- 
+
+# Erosion vs no factor
+# Similarity:
 S1 = np.sqrt(PDF['Ami']*PDF['Ami2']).sum()
+# Mismatch:
 M1 = np.abs(PDF['Ami']-PDF['Ami2']).sum()/2
+# Likeliness:
 L1 = 1-M1
 
+# Fertility vs no factor
+# Similarity:
 S2 = np.sqrt(PDF['Abr']*PDF['Art']).sum()
 M2 = np.abs(PDF['Abr']-PDF['Art']).sum()/2
 L2 = 1-M2
 
+# Gravel supply vs no factor
+# Similarity:
 S3 = np.sqrt(PDF['Art3']*PDF['Art31']).sum()
+# Mismatch:
 M3 = np.abs(PDF['Art3']-PDF['Art31']).sum()/2
+# Likeliness:
 L3 = 1-M3
 
+# Abrasion rate vs no factor
+# Similarity:
 S4 = np.sqrt(PDF['Art4']*PDF['Art41']).sum()
+# Mismatch:
 M4 = np.abs(PDF['Art4']-PDF['Art41']).sum()/2
+# Likeliness:
 L4 = 1-M4
 
+#  Display calculations:
 print('S1 =', S1)
 print('S2 =', S2)
 print('S3 =', S3)
 print('S4 =', S4)
-
-
 print('-------')
 print('M1 =', M1)
 print('M2 =', M2)
 print('M3 =', M3)
 print('M4 =', M4)
-
-
 print('-------')
 print('L1 =', L1)
 print('L2 =', L2)
@@ -207,9 +218,10 @@ print('L3 =', L3)
 print('L4 =', L4)
 
 
+# Distance stored
 x = PDF['Ami'].index
 
-# Create distribution
+# Create distribution for Kolmogorv-Smirnov (K-S) test
 DIST = {}
 
 DIST['Ami'] = stats.rv_discrete(name='Ami',
@@ -228,10 +240,12 @@ DIST['Art4'] = stats.rv_discrete(name='Art4',
                 values=(PDF['Art4'].index, PDF['Art4'].as_matrix().flatten()))
 DIST['Art41'] = stats.rv_discrete(name='Art41',
                 values=(PDF['Art4'].index, PDF['Art41'].as_matrix().flatten()))
+
+# Iterate over all single source data
 for region in objects:
     DIST[region] = stats.rv_discrete(name=region,
                                 values=(x, PDF[region].as_matrix().flatten()))
-#
+
 # Calculate KS test on two sampled distributions
 SIZES['Art'] = SIZES['A'] + SIZES['F'] + SIZES['C'] + SIZES['H']
 D1, p1 = 0, 0
