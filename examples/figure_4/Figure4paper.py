@@ -254,6 +254,7 @@ D3, p3 = 0, 0
 D4, p4 = 0, 0
 D5, p5 = 0, 0
 
+# Storing the test results
 for i in range(1000):
     data1, data2 = DIST['Ami'].rvs(size=SIZES['Art']), DIST['Ami2'].rvs(size=SIZES['Art'])
     data3, data4 = DIST['Abr'].rvs(size=SIZES['Art']), DIST['Art'].rvs(size=SIZES['Art'])
@@ -282,6 +283,8 @@ D3 /= 1000
 p3 /= 1000
 D4 /= 1000
 p4 /= 1000
+
+# Display the results:
 print('-------')
 print('KS 1', kstest1)
 print('KS 2', kstest2)
@@ -293,120 +296,34 @@ print('KS 1a', D1, p1)
 print('KS 2a', D2, p2)
 print('KS 3a', D3, p3)
 print('KS 4a', D4, p4)
-
 print('-------')
 
-# Manual KS Test
-def ksprep(data1, data2):
-    data1, data2 = map(np.asarray, (data1, data2))
-    n1 = data1.shape[0]
-    n2 = data2.shape[0]
-    n1 = len(data1)
-    n2 = len(data2)
-    data1 = np.sort(data1)
-    data2 = np.sort(data2)
-    data_all = np.concatenate([data1,data2])
-    cdf1 = np.searchsorted(data1,data_all,side='right')/(1.0*n1)
-    cdf2 = (np.searchsorted(data2,data_all,side='right'))/(1.0*n2)
-
-    d = np.max(np.absolute(cdf1-cdf2))
-    # Note: d absolute not signed distance
-    en = np.sqrt(n1*n2/float(n1+n2))
-    prob = stats.distributions.kstwobign.sf(en * d)
-
-    return d, prob
-
-d, en = ksprep(data1, data2)
-try:
-    prob = stats.distributions.kstwobign.sf(en * d)
-except:
-    prob = 1.0
-print(d, prob)
-
-G1, g1 = 0, 0
-G2, g2 = 0, 0
-G3, g3 = 0, 0
-G4, g4 = 0, 0
-
-for i in range(1000):
-    data1, data2 = DIST['Ami'].rvs(size=SIZES['Art']), DIST['Ami2'].rvs(size=SIZES['Art'])
-    data3, data4 = DIST['Abr'].rvs(size=SIZES['Art']), DIST['Art'].rvs(size=SIZES['Art'])
-    data5, data6 = DIST['Art3'].rvs(size=SIZES['Art']), DIST['Art31'].rvs(size=SIZES['Art'])
-    data7, data8 = DIST['Art4'].rvs(size=SIZES['Art']), DIST['Art41'].rvs(size=SIZES['Art'])
-
-    kstest1 = ksprep(data1, data2)
-    kstest2 = ksprep(data3, data4)
-    kstest3 = ksprep(data5, data6)
-    kstest4 = ksprep(data7, data8)
-    
-    G1 += kstest1[0]
-    g1 += kstest1[1]
-    G2 += kstest2[0]
-    g2 += kstest2[1]
-    G3 += kstest3[0]
-    g3 += kstest3[1]
-    G4 += kstest4[0]
-    g4 += kstest4[1]
-
-G1 /= 1000
-g1 /= 1000
-G2 /= 1000
-g2 /= 1000
-G3 /= 1000
-g3 /= 1000
-G4 /= 1000
-g4 /= 1000    
-print('KS 1', G1, g1)
-print('KS 2', G2, g2)
-print('KS 3', G3, g3)
-print('KS 4', G4, g4)
-
-print('-------')
-#for i in range(1000):
-#    # KS for each pop
-#    for i, pdf in enumerate(objects2):
-#        ni = SIZES[pdf]
-#        data1_ = DIST[pdf].rvs(size=ni)
-#    
-#    for i, pdf in enumerate(objects2):
-#        prob_mult = 1
-#        d, en = ksprep(data1_, data2)
-#        try:
-#            prob = stats.distributions.kstwobign.sf(np.sqrt(ni) * d / best_phi[i])
-#        except:
-#            prob = 1.0
-#        prob_mult *= 1-prob
-#        print('Region %03s: d=%.2f prob=%f%%' % (pdf, d, 100*prob))
-#    print('prob mult=%.5f%%' % (1-prob_mult))
-
+# Plot the probability density functions (PDFs) generated in the previous scenarios:
 f, ax = plt.subplots()
 plt.ticklabel_format(axis='y', style='sci', scilimits=(-2,2))
+# PDF of a no factor case.
 ax.plot(x, PDF['Ami'], label='Observed', color = '0.6')
 ax.fill_between(x, 0, PDF['Ami'].as_matrix().flatten(), color = '0.6')
-#ax.plot(x, PDF['Ami'], 'b',
-#           label='1a')
+# PDF of erosion scenario:
 ax.plot(x, PDF['Ami2'], 'b',
            label='1b')
-#ax.plot(x, PDF['Abr'], 'g',
-#           label='2a')
+# PDF of fertility scenario:
 ax.plot(x, PDF['Art'], 'g',
            label='2b')
-#ax.plot(x, PDF['Art3'], 'y',
-#           label='3a')
+# PDF of gravel scenario:
 ax.plot(x, PDF['Art31'], 'y',
            label='3b')
+# PDF of abrasion scenario:
 ax.plot(x, PDF['Art41'], 'c',
            label='4b')
+# Legend:
 handles, labels = ax.get_legend_handles_labels()
 leg = ax.legend(handles, labels, frameon=True, fancybox=True, fontsize=18)
 leg.get_frame().set_edgecolor('k')
 ax.set_xlabel('Age [Ma]')
 ax.set_ylabel('Relative probability')
 ax.set_title('PDPs')
-#textstr = 'Mismatch = %.2f%%\nSimilarity = %.2f\nKS test = %.3f' % (rel_error, S, kstest.statistic)
-#props = dict(boxstyle='round', facecolor='white', alpha=1.0)
-#ax.text(0.7, 0.5, transform=ax.transAxes,
-#        verticalalignment='center', bbox=props)
+# Save plot:
 f.savefig(figpath+'pdf_mix_K_E.pdf', bbox_inches='tight')
 f.savefig(figpath+'pdf_mix_K_E.png', bbox_inches='tight')
 
@@ -415,41 +332,10 @@ x = [PDF['Ami'].as_matrix().flatten(), PDF['Ami2'].as_matrix().flatten(), PDF['A
 x1 = [PDF['Ami'].as_matrix().flatten(), PDF['Abr'].as_matrix().flatten(), PDF['Art3'].as_matrix().flatten(), PDF['Art4'].as_matrix().flatten()]
 x2 = [PDF['Ami2'].as_matrix().flatten(), PDF['Art'].as_matrix().flatten(),PDF['Art31'].as_matrix().flatten(), PDF['Art41'].as_matrix().flatten()]
 
-
-#x = {'PDF[E]': (PDF['E'].as_matrix().flatten()), 'PDF[Art]': (PDF['Art'].as_matrix().flatten()), 'PDF[Ami]': (PDF['Ami'].as_matrix().flatten()), 'PDF[Abr]': (PDF['Abr'].as_matrix().flatten()}
-
 gx1 = ['PDF[Ami]', 'PDF[Abr]', 'PDF[Art3]', 'PDF[Art4]', 'PDF[Art5]']
 gx2 = ['PDF[Ami2]','PDF[Art]','PDF[Art31]', 'PDF[Art41]', 'PDF[Art51]']
 axmin, axmax = min([min(x[0]), min(x[1])]), max([max(x[0]), max(x[1])])
 axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
-
-# Linear fit
-# Don't forget to add ones to fit y = ax+b instead of y = ax
-# X = sm.add_constant(x[2])
-#for i in x1:
-#    for m in x2:
-#        X = sm.add_constant(m)
-#        reg = sm.OLS(i, X).fit()
-#        sns.set(style='ticks', font_scale=1.5)
-#        
-#        # Pretty
-#        cm = plt.cm.get_cmap('RdYlBu')
-#        f, ax = plt.subplots()
-#        ax.plot(m, reg.predict(X), 'k', label=r'$R^2 = %.3f$' % reg.rsquared)
-#        sc = ax.scatter(m, i, s=50, alpha=0.6, c=range(4001), facecolors='none', cmap=cm, vmin=0, vmax=4000 )
-#        ax.set_xlabel(gx1[i])
-#        ax.set_ylabel(gx2[i])
-#        #sns.despine(ax=ax)
-#        plt.ticklabel_format(style='sci', scilimits=(-2,2))   
-#        plt.axis('equal')
-#        ax.set_xlim([axmin, axmax])
-#        ax.set_ylim([axmin, axmax])
-#        plt.legend(loc=4)
-#        cbar=plt.colorbar(sc)
-#        cbar.solids.set_edgecolor("face")
-#        plt.draw()
-#        f.savefig(figpath+'crossplotpdf_K_e.png', bbox_inches='tight')
-#        f.savefig(figpath+'crossplotpdf_K_e.pdf', bbox_inches='tight')
 
 for i,j in zip(x1,x2):
         X = sm.add_constant(j)
@@ -488,23 +374,6 @@ kb = cumtrapz(PDF['Art41'].as_matrix().flatten(), dx=dx)
 
 axmin, axmax = min([min(xa), min(xb)]), max([max(xa), max(xb)])
 axmin,axmax = axmin-(axmax-axmin)*0.05, axmax+(axmax-axmin)*0.05
-#bb = [x, y, xh, xj, jj]
-#for i in bb:
-#    X = sm.add_constant(x)
-#    reg = sm.OLS(i, X).fit()
-#    
-#    sns.set(style='ticks', font_scale=1.5)
-#    f, ax = plt.subplots()
-#    ax.plot(x, reg.predict(X), 'k', label=r'$R^2 = %.3f$' % reg.rsquared)
-#    ax.scatter(x, i, s=50, alpha=0.6, edgecolor=prp, facecolors='none')
-#    ax.set_xlabel('CDF [K]')
-#    ax.set_ylabel('CDF')
-#    sns.despine(ax=ax)
-#    ax.set_xlim([axmin, axmax])
-#    ax.set_ylim([axmin, axmax])
-#    plt.legend(loc=4)
-#    f.savefig(figpath+'crossplotcdf_K_e'+ str(i)+'.png', bbox_inches='tight')
-#    f.savefig(figpath+'crossplotcdf_K_e.pdf', bbox_inches='tight')
 
 Xa = sm.add_constant(xb)
 Xb = sm.add_constant(zb)
