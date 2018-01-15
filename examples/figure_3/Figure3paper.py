@@ -3,13 +3,14 @@
 """
  
 Figure 3 (Figure3paper.py) is a series of code used to generate the figure 3
-of the work of Lavarini et al. [2018a].
+in the work of Lavarini et al. [2018a].
 
  Reference:
      
      Lavarini et al. [2018]. Does pebble abrasion influence detrital age 
      population statistics? A numerical investigation of natural data sets. 
      Journal of Geophysical Research - Earth Surface.
+     
  Authors: C. Lavarini (lavarini.c@gmail.com), C. A. da Costa Filho & M. Attal
  The University of Edinburgh, UK
  December of 2017
@@ -34,9 +35,10 @@ sns.set(style='ticks', font_scale=1.5,
             'figure.figsize': (10, 8),
             'text.usetex': False,
         })
-
+# Set path to save figures:
 figpath = os.path.join('K_AGES/', 'marsyandi_')
 
+# Function to generate probability density functions (PDFs):
 def generate_pdf(filename, sheet, smooth=80, plot=True):
     df = pd.read_excel(filename, sheetname = sheet, skiprows=(0,))
 
@@ -100,16 +102,26 @@ def generate_pdf(filename, sheet, smooth=80, plot=True):
 #######################
 
 plt.ion()
+
+# Sheets with single source unit data
 sheets = ['A', 'C', 'F', 'H', 'K']
+
+# Filename containing the sheets
 filename = 'MARSYANDI_SYNTHETIC_1.xlsx'
+
+# Sheet names of single source units
 objects = ('A', 'C', 'K', 'H', 'F')
 objects2 = ('A', 'C', 'H', 'F')
 
+# Create a dictionary to store the PDFs and their sample sizes
 PDF = {}
 SIZES = {}
+
+# Loop over all the sheets (samples)
 for sheet in sheets:
     PDF[sheet], SIZES[sheet] = generate_pdf(filename, sheet, smooth=80, plot=False)
 
+# Function to find the best-fit zircon mixing proportion
 def cost_function(phi):
      f = phi[0]*PDF['A'] + phi[1]*PDF['C'] + \
          phi[2]*PDF['F'] + phi[3]*PDF['H']
@@ -117,8 +129,8 @@ def cost_function(phi):
      cost = np.trapz(abs(f-PDF['K']).as_matrix().flatten(),
                       dx=x[2]-x[1])/2
      return cost*100
-
-
+    
+# Function to find the best-fit zircon mixing proportion
 def cost_function2(phi):
      f = phi[0]*0.31*PDF['A'] + phi[1]*0.12*PDF['C'] + \
          phi[2]*0.23*PDF['F'] + phi[3]*0.33*PDF['H']
@@ -126,9 +138,9 @@ def cost_function2(phi):
      cost = np.trapz(abs(f-PDF['K']).as_matrix().flatten(),
                       dx=x[2]-x[1])/2
      return cost*100
-
+    
+# Finding the best-fit zircon mixing proportion
 initial_phi = [0, 1, 0, 0]
-#initial_phi = [0.37909023+0.12490409,  0.17217019, 0.32383549]
 bounds = tuple([(0,1)]*len(initial_phi))
 constraints = ({'type':'eq', 'fun': lambda x: sum(x)-1},)
 res = minimize(cost_function, initial_phi, method='SLSQP', bounds=bounds, constraints=constraints, tol=1e-10)
@@ -145,47 +157,36 @@ for i in range(30):
         print()
         print('New best cost: ', lowest_cost)
         print('New best phi:  ', best_phi)
-
-initial_phi2 = [0, 1, 0, 0]
-#initial_phi = [0.37909023+0.12490409,  0.17217019, 0.32383549]
-bounds2 = tuple([(0,1)]*len(initial_phi2))
-constraints2 = ({'type':'eq', 'fun': lambda x: sum(x)-1},)
-res2 = minimize(cost_function, initial_phi, method='SLSQP', bounds=bounds, constraints=constraints, tol=1e-10)
-lowest_cost2 = res2.fun
-best_phi2 = res2.x
-for i in range(30):
-    initial_phi2 = np.random.uniform(0, 1, size=(len(initial_phi2),))
-    initial_phi2 /= sum(initial_phi2)
-    bounds2 = tuple([(0,1)]*len(initial_phi2))
-    res2 = minimize(cost_function2, initial_phi2, method='SLSQP', bounds=bounds2, constraints=constraints2, tol=1e-10)
-    if res2.fun < lowest_cost2:
-        lowest_cost2 = res2.fun
-        best_phi2 = res2.x
-        print()
-        print('New best cost: ', lowest_cost2)
-        print('New best phi erosion:  ', best_phi2)
-        
-phi_ami = [0.331, 0.194, 0.229, 0.246] # 0.4 for all them
-
-#phi_ami = [0.271, 0.175, 0.235, 0.319] # 0 for all them
+# Scenario A1
+# Testing the influence of abrasion in zircon mixing proportion
+# Values of mixing proportions from pABRASIONmodel where 0.4%/km was used for all sources
+phi_ami = [0.331, 0.194, 0.229, 0.246] 
+# Generate PDFs
 PDF['Ami'] = phi_ami[0]*PDF['A'] + phi_ami[1]*PDF['C'] + \
          phi_ami[2]*PDF['F'] + phi_ami[3]*PDF['H']
 x = PDF['Ami'].index
+# Calculate area mismatch between the above PDF and a PDF with no-abrasion
 newcost = np.trapz(abs(PDF['Ami']-PDF['K']).as_matrix().flatten(),
                       dx=x[2]-x[1])/2
 newcost = newcost*100
+# Print the mismatch and zircon mixing proportion:
 print('-------')
-print('Lowest mismatch Amidon paper:', newcost)
-print('Best phi Amidon paper:', phi_ami)
+print('Mismatch:', newcost)
+print('Zircon mixing proportion:', phi_ami)
 
-phi_ami2 = [0.525, 0.129, 0.158, 0.188] # 31 for the first and 0.15 for all rest
-
+# Scenario A2
+# Testing the influence of abrasion in zircon mixing proportion
+# Values of mixing proportions from pABRASIONmodel where 31.0 %/km was used for the TTS and 0.15 for all rest
+phi_ami2 = [0.525, 0.129, 0.158, 0.188] 
+# Generate PDFs
 PDF['Ami2'] = phi_ami2[0]*PDF['A'] + phi_ami2[1]*PDF['C'] + \
          phi_ami2[2]*PDF['F'] + phi_ami2[3]*PDF['H']
 x = PDF['Ami2'].index
+# Calculate area mismatch between the above PDF and a PDF with no-abrasion
 newcost2 = np.trapz(abs(PDF['Ami2']-PDF['K']).as_matrix().flatten(),
                       dx=x[2]-x[1])/2
 newcost2 = newcost2*100
+# Print the mismatch and zircon mixing proportion:
 print('-------')
 print('Lowest mismatch Amidon paper:', newcost2)
 print('Best phi Amidon paper:', phi_ami2)
