@@ -43,7 +43,7 @@ To know what each function does and the file extensions needed to perform the ca
     
 ### Examples
 
-A folder available in this repository ('examples') shows how we used these functions
+A folder ('examples') available in this repository shows how we used these functions
 in our research paper. 
 
 There is also a text file ('variables_in_detail') explaining the structure of files required to run the code correctly. 
