@@ -18,7 +18,7 @@ Python 3.x.
 2. Add your path to Python interpreter:
 ```
 >>> import sys
->>> sys.path.append('paste the path here')```
+>>> sys.path.append('paste the path here')
 ```
 
 Use import to have the packages in your Python shell.
