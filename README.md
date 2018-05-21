@@ -1,4 +1,4 @@
-# Lavarini et al. [2018a]
+# Lavarini et al. [2018]. Journal of Geophysical Research: Earth Surface, submitted.
 
 Packages that are designed to quantify zircon mixing proportion of source units in river sediments and to compare U-Pb age distributions.
 
